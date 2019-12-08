@@ -74,6 +74,8 @@ To run the CLI with the default arguments (sample file provided in the original 
 docker run --rm psoliveira/unbabel-cli
 ```
 
+Here we're using my private registry in DockerHub `psoliveira` and the image name of the application is the `unbabel-cli`. Given that the previous command did not specify a tag the `latest` is used by default.
+
 Naturally, you will want to execute the CLI using different arguments, in order to do so we will use volumes. Assuming you have your test files inside `/Users/<username>/data/` you can execute the following command:
 
 ```bash
