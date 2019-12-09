@@ -1,23 +1,26 @@
 # Backend Engineering Challenge
 
-This is my solution to the Unbabel's [Backend Engineering Challenge](https://github.com/rodrigorato/backend-engineering-challenge/blob/master/CHALL.md).
+This is my solution to the Unbabel's [Backend Engineering Challenge](https://github.com/rodrigorato/backend-engineering-challenge/blob/master/CHALL.md). I chose to use  **Python** to solve this challenge given my experience with this programming language, the many SDKs available for this type of problem and being more readable than other programming languages.
 
 ## Introduction
 
-The challenge scenario deals with a streaming pipeline that calculates statistics of the performance of the translation service. Namely, here we are interested in performance in terms of the speed of translation, measured by the average delivery time by minute over the past X minutes. Even though the challenge context deals with a streaming pipeline, we're asked to solve this challenge in a simplified way. Meaning, that we should assume that "our translation flow is going to be modeled as only one event". Therefore, we are placed with an interesting dilema on whether we should provide a solution to a "streaming problem" or to the simpler problem of processing "one file". I decided to follow the second approach, and I explain why below. Before delving into more explanations, let me mention that I've decided to solve this problem using **Python** given my experience with it and the many SDKs available for this type of problems.
+The challenge scenario deals with a streaming pipeline that calculates statistics of the performance of the translation service. Namely, here we are interested in performance in terms of the speed of translation, measured by the average delivery time by minute over the past X minutes. 
 
-In more realistic scenario, I would expect to have an architecture with more components including multiple publishers (of these translation events), brokers and consumers. One consumer of these events would be our streaming pipeline to compute the aggregated statistics. If we were solving this scenario, I would use a frameworks like Apache Spark or Apache Beam for the streaming part. I name these two because I've used them in the past, although I'm no expert, but many more solutions are available. Given that we are faced with a simpler problem, and we're asked a simple solution, my thought was on providing a straightforward solution, and that, in a given way, resembled the kind of processing that is done in a more realistic setup. I'll develop further this reasoning later in the [Proposed solution](#proposed-solution) section.
+### Problem interpretation
 
-Hence, I decided to approach the problem as processing one static file with translation events. Furthermore, I also assumed that we're able to load the contents of this file into memory of our machine. This is a key assumption of the proposed solution, and obviously can be debatable. The reason why I decided to make this assumption was pretty much the same as stated in the previous paragraph. In a realistic scenario, or at least how I imagine it to be, we wouldn't be processing a huge file with several GBs, over which data was continuously being appended. In a simplified setup, I believe that is fair to assume that we can load the data in memory. Moreover, this would be the approach that I would follow if I was asked to solve this problem urgently by my boss in one afternoon, or if this was part of a Proof-of-Concept where processing huge files was not so important. 
+Even though the challenge context deals with a streaming pipeline, we are asked to solve this challenge in a simplified way. Meaning, that we should assume that "our translation flow is going to be modeled as only one event". Therefore, we are placed with an interesting dilema on whether we should provide a solution to a "streaming problem" or to the simpler problem of processing "one file". I decided to follow the second approach, and I explain why below. 
 
-Having decided to read the entire contents of the file in one step, the obvious choice was to use a `pandas.DataFrame` not only to store the data, but on which we applied all the processing. It should be noted that the the `pandas.DataFrame` has many things in common with the `pyspark.sql.DataFrames` and vice-versa. The usage of this data structure enables us to use all the aggregation and windowing features that are built-in. Thereby, if we're asked for more statistics these could be easily added. We also note the structured nature of the input data is suitable to be handled by  a data frame kind of structure.
+In more realistic scenario, I would expect to have an architecture with more components including multiple publishers, brokers and consumers. One consumer would be our streaming pipeline to compute the aggregated statistics. In such scenario, I would use a framework like Apache Spark or Apache Beam for the streaming part. 
 
-Finally, I've also considered alternative solutions, mainly targeting to deal with the key assumption of fitting the entire data in memory. An alternative solution would be based on using the `jsonlines` package to read and process line by line of the input file. From the tests that I've made we are able to process files with GBs, whereas reading files with GB using a `pandas.DataFrame` requires a more powerful machine.
+> Facing a simpler problem, I opted for a straightforward solution, but that resembles the kind of processing that is done in a more realistic setup.
 
+### Approach and key assumption
+
+The chosen approach was to process a static input file (the file does not change after we run our application), and moreover, I also assume that we can load the contents of this ifle into the memory of the machine running the application. The reasoning for this assumption is that in a realistic setup, we would process fast streams of data and not a single huge file with several GBs.
 
 ## How to install
 
-As mentioned before, I've decide to use Python in my solution for this challenge. As such, in order to test my solution you need to have either Python or Docker installed. For Python the solution requires Python>=3.7.
+In order to test my solution you need to have either Python or Docker installed. For Python the solution requires Python>=3.7.
 
 For running from the source code, you need to clone the code from the repo with the usual commands:
 
@@ -74,7 +77,7 @@ To run the CLI with the default arguments (sample file provided in the original 
 docker run --rm psoliveira/unbabel-cli
 ```
 
-Here we're using my private registry in DockerHub `psoliveira` and the image name of the application is the `unbabel-cli`. Given that the previous command did not specify a tag the `latest` is used by default.
+Here we are using my private registry (`psoliveira`) in [Docker Hub](https://hub.docker.com/) and the image name of the application is the `unbabel-cli`. Given that the previous command did not specify a tag the `latest` is used by default.
 
 Naturally, you will want to execute the CLI using different arguments, in order to do so we will use volumes. Assuming you have your test files inside `/Users/<username>/data/` you can execute the following command:
 
@@ -88,7 +91,7 @@ Note: we use the option `--rm` to cleanup the container after it terminates and 
 
 ## Tests
 
-I've used the `pytest` package for unit testing. The main thing I like about this framework when compared to other solutions is the fact that is less verbose.
+I have used the `pytest` package for unit testing. The main thing I like about this framework when compared to other solutions is the fact that is less verbose.
 
 The test cases elaborated can be divided in two types:
 
@@ -140,3 +143,10 @@ In this section more details are provided about the proposed solution. First, I 
 8. No rounding should be performed on the calculated moving averages.
 9. The input file is the [jsonlines](http://jsonlines.org/) format and not in the JSON format. This means that we expect each line of the input file to be a valid JSON. However, if the entire file is JSON array of JSON objects the application will raise an error. The input file can have the `.json` extension, but needs to have the contents in the jsonlines format. For all the test files the convention was to use the `.jsonl` extension.
 
+Having decided to read the entire contents of the file in one step, the obvious choice was to use a `pandas.DataFrame` not only to store the data, but also to perform any transformation and/or aggregation. It should be noted that the `pandas.DataFrame` has many features in common with the `pyspark.sql.DataFrames` and vice-versa. 
+
+The usage of this data structure enables us to use all the aggregation and window features that are built-in in this package. Therefore, if we were asked for more statistics these could be easily added. We also note the structured nature of the input data is suitable to be handled by a data frame kind of structure.
+
+## Alternative solutions
+
+Finally, I have also considered alternative solutions, mainly targeting to deal with the key assumption of fitting the entire data in memory. An alternative solution would be based on using the `jsonlines` package to read and process the input file line by line. Exploratory testing showed the ability to process GB files, whereas reading files with GBs using a `pandas.DataFrame` requires a more powerful machine.
