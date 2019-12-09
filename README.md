@@ -1,6 +1,6 @@
 # Backend Engineering Challenge
 
-This is my solution to the Unbabel's [Backend Engineering Challenge](https://github.com/rodrigorato/backend-engineering-challenge/blob/master/CHALL.md). I chose to use  **Python** to solve this challenge given my experience with this programming language, the many SDKs available for this type of problem and being more readable than other programming languages.
+This is my solution to the Unbabel's [Backend Engineering Challenge](https://github.com/Unbabel/backend-engineering-challenge/blob/master/README.md). I chose to use  **Python** to solve this challenge given my experience with this programming language, the many SDKs available for this type of problem and being more readable than other programming languages.
 
 ## Introduction
 
@@ -67,11 +67,11 @@ For running the CLI directly from python and assuming you are located in the roo
 python unbabel_cli.py -i data/events.jsonl -w 10
 ```
 
-This will use the as input file the `data/events.jsonl` provided as the sample input in the original [README.md](https://github.com/rodrigorato/backend-engineering-challenge/blob/master/CHALL.md) and a window size of 10 minutes. 
+This will use the as input file the `data/events.jsonl` provided as the sample input in the original [README.md](https://github.com/Unbabel/backend-engineering-challenge/blob/master/README.md) and a window size of 10 minutes. 
 
 ### Using Docker
 
-To run the CLI with the default arguments (sample file provided in the original [README.md](https://github.com/rodrigorato/backend-engineering-challenge/blob/master/CHALL.md) and a window size of 10 minutes) simply execute:
+To run the CLI with the default arguments (sample file provided in the original [README.md](https://github.com/Unbabel/backend-engineering-challenge/blob/master/README.md) and a window size of 10 minutes) simply execute:
 
 ```bash
 docker run --rm psoliveira/unbabel-cli
@@ -98,17 +98,24 @@ The test cases elaborated can be divided in two types:
 1. Test the behavior with *bad* input files.
 2. Test the if the CLI output (file) results in the expected output (file).
 
-For the first kind of test cases we test the behavior when the input file is:
+### Test the behavior with *bad* input files
 
 - empty
 - has a JSON format (not a JSON per line)
 - has a wrong format (e.g.: a csv file)
 
-For the second kind of test cases, we test two different input files for which we *know* the output result:
+### Test if output is what we expect
+
+We test two different input files for which we *know* the output result:
+
 - `data/events.jsonl` the sample file provided in the challenge
 - `data/events_2.json` a file created based on the sample file describe above, but with additional data and targeted for testing edge cases.
 
+### Running the tests
+
 To run the tests you can do run `pytest` on the root of the project or, using Docker, run `docker --run psoliveira/unbabel-cli pytest`.
+
+### Generating test date
 
 The script `data_generator.py` located in the root of the project was created with the goal to generate test files with random data. This script accepts two command line arguments:
 
@@ -123,11 +130,29 @@ A Continuous Integration (CI) pipeline was setup using the GitLab CI provided in
 
 The pipeline consists of three stages:
 
-- **build** In this stage the Docker image with the source code is built. Here one tests whether we can safely build the image on a remote machine. The output of this stage will be `psoliveira/unbabel-cli:test` image, where we use the `test` tag to indicate this is an intermediary test image.
-- **test** This stage allows us to run our tests, by running `pytest` inside the previously created test image `psoliveira/unbabel-cli:test`. If any test fails, the stage will be in error and the pipeline terminates.
-- **release** / **release-tag** The final stage involves simply the release of the latest version of our newly created image. The previous `test` image is tagged to either `latest` or a `tag` version. If we have pushed our code to the `master` branch the **release** stage will be run and `test` image will be tagged as `latest`, otherwise, if we have created a new `tag` the test image will be tagged with the same `tag`name. E.g.: if we created a tag `1.0.0` in the Git repository, the image to be release will be `psoliveira/unbabel-cli:1.0.0`. Finally, the tagged image is pushed to the DockerHub (the registry being used) and the new version becomes publicly available. 
+### Build
 
-The [Dockerfile](Dockerfile) is based on the official `python:3.7` image given that the developed code requires Python 3.7. For this challenge, I chose to have a more simplified image but not optimized for performance or storage efficiency. For having a smaller image we could start from a `python-3.7-alpine` for instance. However the Dockerfile would not be so *clean*. You can have a look at this [py-base](https://github.com/pedro-oliveira/py-base), which shows one way to build smaller image for Python and some of the most used packages.
+In this stage the Docker image with the source code is built. Here one tests whether we can safely build the image on a remote machine. The output of this stage will be `psoliveira/unbabel-cli:test` image, where we use the `test` tag to indicate this is an intermediary test image.
+
+### Test
+
+This stage allows us to run our tests, by running `pytest` inside the previously created test image `psoliveira/unbabel-cli:test`. If any test fails, the stage will be in error and the pipeline terminates.
+
+### Release
+
+The final stage involves simply the release of the latest version of our newly created image. The previous `test` image is tagged to either `latest` or a `tag` version. Therefore, we can have either a **release** or **release-tag** stage:
+
+- **release** when we have pushed our code to the `master` branch, `test` image will be tagged as `latest`. 
+
+- **release-tag** when we create a new `tag` in the Git repository, the test image will be tagged with the same `tag` name. E.g.: if we created a tag `1.0.0` in the Git repository, the image to be release will be `psoliveira/unbabel-cli:1.0.0`. 
+
+Finally, the tagged image is pushed to the Docker Hub (the registry being used) and the new version becomes publicly available. 
+
+### Dockerfile
+
+The [Dockerfile](Dockerfile) is based on the official `python:3.7` image given that the developed code requires Python 3.7. For this challenge, I chose to use more simple image, but not optimized for storage efficiency. 
+
+For working with lighter images we could, for instance, start from a `python-3.7-alpine` image. However the Dockerfile would not be so *clean*. You can have a look at this [py-base](https://github.com/pedro-oliveira/py-base) repository, which shows one way to build smaller image for Python with some of the most popular packages installed.
 
 ## Proposed solution
 
