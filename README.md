@@ -115,7 +115,7 @@ We test two different input files for which we *know* the output result:
 
 To run the tests you can do run `pytest` on the root of the project or, using Docker, run `docker --run psoliveira/unbabel-cli pytest`.
 
-### Generating test date
+### Generating test data
 
 The script `data_generator.py` located in the root of the project was created with the goal to generate test files with random data. This script accepts two command line arguments:
 
