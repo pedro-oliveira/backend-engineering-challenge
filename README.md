@@ -148,7 +148,7 @@ The final stage involves simply the release of the latest version of our newly c
 
 Finally, the tagged image is pushed to the Docker Hub (the registry being used) and the new version becomes publicly available. Information about this image repository can be found [here](https://hub.docker.com/repository/docker/psoliveira/unbabel-cli/general).
 
-In order to run the GitLab CI, it was necessary to configure an external repository in my [GitLab.com account](https://gitlab.com/psoliveira). Creating in this way a *repository mirroring* to this repository. The status of GitLab CI pipelines can be viewed [here](https://gitlab.com/psoliveira/backend-engineering-challenge/pipelines).
+In order to run the GitLab CI, it was necessary to configure an external repository in my [GitLab.com account](https://gitlab.com/psoliveira). Creating this way a *repository mirror* from this repository to an external repository in GitLab. The status of GitLab CI pipelines can be viewed [here](https://gitlab.com/psoliveira/backend-engineering-challenge/pipelines).
 
 ### Dockerfile
 
