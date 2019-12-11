@@ -146,7 +146,9 @@ The final stage involves simply the release of the latest version of our newly c
 
 - **release-tag** when we create a new `tag` in the Git repository, the test image will be tagged with the same `tag` name. E.g.: if we created a tag `1.0.0` in the Git repository, the image to be release will be `psoliveira/unbabel-cli:1.0.0`. 
 
-Finally, the tagged image is pushed to the Docker Hub (the registry being used) and the new version becomes publicly available. 
+Finally, the tagged image is pushed to the Docker Hub (the registry being used) and the new version becomes publicly available. Information about this image repository can be found [here](https://hub.docker.com/repository/docker/psoliveira/unbabel-cli/general).
+
+In order to run the GitLab CI, it was necessary to configure an external repository in my [GitLab.com account](https://gitlab.com/psoliveira). Creating in this way a *repository mirroring* to this repository. The status of GitLab CI pipelines can be viewed [here](https://gitlab.com/psoliveira/backend-engineering-challenge/pipelines).
 
 ### Dockerfile
 
