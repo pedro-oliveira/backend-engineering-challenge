@@ -1,5 +1,10 @@
 # Backend Engineering Challenge
 
+[![pipeline status](https://gitlab.com/psoliveira/backend-engineering-challenge/badges/master/pipeline.svg)](https://gitlab.com/psoliveira/backend-engineering-challenge/commits/master)
+[![Latest release](https://img.shields.io/github/v/release/pedro-oliveira/backend-engineering-challenge?style=plastic)](https://github.com/pedro-oliveira/backend-engineering-challenge/releases)
+
+
+
 This is my solution to the Unbabel's [Backend Engineering Challenge](https://github.com/Unbabel/backend-engineering-challenge/blob/master/README.md). I chose to use  **Python** to solve this challenge given my experience with this programming language, the many SDKs available for this type of problem and being more readable than other programming languages.
 
 ## Introduction
